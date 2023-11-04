@@ -5,15 +5,22 @@ require('dotenv').config()
 const express = require('express')
 // import cors
 const cors = require('cors')
+// import router
+const router = require('./Routes/routes')
+// import db
+require('./DB/connection')
+
 
 // to create express server
 const pfServer = express()
 
 // use cors
 pfServer.use(cors())
-
 // parse json data using server
 pfServer.use(express.json())
+
+// use router
+pfServer.use(router)
 
 // customise port for server app
 const PORT = 4000 || process.env.PORT
@@ -23,7 +30,7 @@ pfServer.listen(PORT,()=>{
     console.log(`project fair server started at port : ${PORT}`);
 })
 
-// resolve request to localhost : 4000
+// resolve request to localhost:4000
 pfServer.get('/',(req,res)=>{
     res.send(`<p> Project fair server started !!! <p/>`)
 })
