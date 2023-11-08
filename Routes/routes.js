@@ -9,6 +9,8 @@ const router = new express.Router()
 // define different routes for server app
 // register
 router.post('/user/register',userController.register)
+// login
+router.post('/user/login',userController.login)
 
 
 // export
