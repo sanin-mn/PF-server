@@ -2,6 +2,8 @@
 const express = require('express')
 // import userController.js file
 const userController = require('../Controllers/userController')
+// import project controller.js
+const projectController = require('../Controllers/projectController')
 
 // create router for express app using Router()
 const router = new express.Router()
@@ -11,6 +13,9 @@ const router = new express.Router()
 router.post('/user/register',userController.register)
 // login
 router.post('/user/login',userController.login)
+// addProject
+router.post('/project/add',projectController.addProject)
+
 
 
 // export
