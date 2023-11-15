@@ -4,6 +4,7 @@ const express = require('express')
 const userController = require('../Controllers/userController')
 // import project controller.js
 const projectController = require('../Controllers/projectController')
+const multerConfig = require('../Middlewares/multerMiddleware')
 
 // create router for express app using Router()
 const router = new express.Router()
@@ -14,7 +15,7 @@ router.post('/user/register',userController.register)
 // login
 router.post('/user/login',userController.login)
 // addProject
-router.post('/project/add',projectController.addProject)
+router.post('/projects/add',multerConfig.single('project-image'),projectController.addProject)
 
 
 
