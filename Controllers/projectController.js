@@ -6,65 +6,80 @@ exports.addProject = async (req, res) => {
     const { title, language, github, website, overview, userId } = req.body
     const projectImage = req.file.filename
     // console.log(`${title},${language},${github},${website},${overview},${projectImage},${userId}`);
-    try{
-        const existingProject = await projects.findOne({github})
-        if(existingProject){
+    try {
+        const existingProject = await projects.findOne({ github })
+        if (existingProject) {
             res.status(406).json("Project already exists...")
-        }else{
+        } else {
             const newProject = new projects({
-                title,language,github,website,overview,projectImage,userId
+                title, language, github, website, overview, projectImage, userId
             })
             await newProject.save()
             res.status(200).json(newProject)
         }
-    }catch(err){
+    } catch (err) {
         res.status(401).json(`Error !!! Transaction failed: ${err}`)
     }
 }
 // get all user project
-exports.getAllUserProject = async (req,res)=>{
+exports.getAllUserProject = async (req, res) => {
     const userId = req.payload
-    try{
-        const userProjects = await projects.find({userId})
+    try {
+        const userProjects = await projects.find({ userId })
         res.status(200).json(userProjects)
-    }catch(err){
+    } catch (err) {
         res.status(401).json(`Error Transaction failed: ${err}`)
     }
 }
 
 // get home projects
-exports.getHomeProjects = async(req,res)=>{
-    try{
+exports.getHomeProjects = async (req, res) => {
+    try {
         const homeProjects = await projects.find().limit(3)
         res.status(200).json(homeProjects)
-    }catch(err){
+    } catch (err) {
         res.status(401).json(`Error !!! Transaction failed : ${err}`)
     }
 }
 
 // get all projects
-exports.getAllProjects = async (req,res)=>{
-    try{
-        const allProjects = await projects.find()
+exports.getAllProjects = async (req, res) => {
+    const searchKey = req.query.search
+    const query = {
+        language:{$regex:searchKey,$options:"i"}
+    }
+    try {
+        const allProjects = await projects.find(query)
         res.status(200).json(allProjects)
-    }catch(err){
+    } catch (err) {
         res.status(401).json(`Error !!! Transaction failed : ${err}`)
     }
 }
 
 // edit projects
-exports.editProject = async (req,res)=>{
+exports.editProject = async (req, res) => {
     const userId = req.payload
-        const { title, language, github, website, overview, projectImage } = req.body
-        const uploadedImage = req.file?req.file.filename:projectImage
-        const {id} = req.params
-    try{
-        const updateProject = await projects.findByIdAndUpdate({_id:id},{
-            title,language,github,website,overview,projectImage:uploadedImage,userId
-        },{new:true})
+    const { title, language, github, website, overview, projectImage } = req.body
+    const uploadedImage = req.file ? req.file.filename : projectImage
+    const { id } = req.params
+    try {
+        const updateProject = await projects.findByIdAndUpdate({ _id: id }, {
+            title, language, github, website, overview, projectImage: uploadedImage, userId
+        }, { new: true })
         await updateProject.save()
         res.status(200).json(updateProject)
-    }catch(err){
+    } catch (err) {
+        res.status(401).json(`Error !!! Transaction failed : ${err}`)
+    }
+}
+
+// delete project
+exports.deleteProject = async (req, res) => {
+    const { id } = req.params
+    try {
+        const removeProject = await projects.findByIdAndDelete({_id:id})
+        res.status(200).json(removeProject)
+    }catch (err) {
         res.status(401).json(`Error !!! Transaction failed : ${err}`)
     }
 }
