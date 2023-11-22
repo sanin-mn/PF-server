@@ -51,3 +51,20 @@ exports.getAllProjects = async (req,res)=>{
         res.status(401).json(`Error !!! Transaction failed : ${err}`)
     }
 }
+
+// edit projects
+exports.editProject = async (req,res)=>{
+    const userId = req.payload
+        const { title, language, github, website, overview, projectImage } = req.body
+        const uploadedImage = req.file?req.file.filename:projectImage
+        const {id} = req.params
+    try{
+        const updateProject = await projects.findByIdAndUpdate({_id:id},{
+            title,language,github,website,overview,projectImage:uploadedImage,userId
+        },{new:true})
+        await updateProject.save()
+        res.status(200).json(updateProject)
+    }catch(err){
+        res.status(401).json(`Error !!! Transaction failed : ${err}`)
+    }
+}
